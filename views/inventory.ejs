@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ('partials/head.ejs') %>
+  </head>
+
+  <body class="hold-transition sidebar-mini">
+    <!-- Site Wrapper -->
+    <div class="wrapper">
+      <%- include ('partials/topbar.ejs') %> <%- include
+      ('partials/sidenav.ejs') %>
+
+      <div class="content-wrapper">
+        <section class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1>Stock Records</h1>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                  <li class="breadcrumb-item active">
+                    <a href="/inventory">Inventory</a>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card card-info">
+                  <div class="card-header">
+                    <h3 class="card-title">Items</h3>
+
+                    <a
+                      class="btn-sm btn-secondary float-right mr-2"
+                      data-toggle="modal"
+                      data-target="#modal-lg"
+                    >
+                      <i class="fas fa-plus-circle"></i>
+                      Add Items
+                    </a>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="table-responsive-sm">
+                      <table
+                        id="itemTable"
+                        class="table table-hover table-bordered table-sm"
+                        data-target="/getItems"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Purchase Date</th>
+                            <th>Item Code</th>
+                            <th>Phone Model</th>
+                            <th>Phone Storage</th>
+                            <th>Phone Color</th>
+                            <th>IMEI Number</th>
+                            <th>Purchase Rate</th>
+                            <th>Price USD</th>
+                            <th>Price TZS</th>
+                            <th>Cost</th>
+                            <th>Barcode Number</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% if (records.length > 0) { %> <%
+                          records.forEach(function (row) { %>
+                          <tr>
+                            <td><%= row.purchaseDate %></td>
+                            <td><%= row.itemCode %></td>
+                            <td><%= row.phoneModel %></td>
+                            <td><%= row.phoneStorage %></td>
+                            <td><%= row.phoneColor %></td>
+                            <td><%= row.imei %></td>
+                            <td><%= row.rate %></td>
+                            <td><%= row.priceUsd %></td>
+                            <td><%= row.priceTzs %></td>
+                            <td><%= row.cost %></td>
+                            <td><%= row.barCode %></td>
+                            <td>
+                              <button
+                                type="button"
+                                class="btn btn-default btn-sm"
+                              >
+                                <i class="fas fa-share"></i> In Stock
+                              </button>
+                            </td>
+                            <td>
+                              <a
+                                type="button"
+                                href="/inventory/edit/<%= row._id %>"
+                                class="btn btn-success btn-sm"
+                              >
+                                <i class="fas fa-edit"></i>
+                              </a>
+
+                              <a
+                                type="button"
+                                href="inventory/delete/<%= row._id %>"
+                                class="btn btn-danger btn-sm"
+                              >
+                                <i class="fas fa-trash-alt"></i>
+                              </a>
+
+                            </td>
+                          </tr>
+                          <%}) } else { %>
+                          <tr>
+                            <td colspan="13">No Items Found</td>
+                          </tr>
+                          <% } %>
+                        </tbody>
+
+                        <tfoot></tfoot>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="card-footer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal fade mt-0" id="modal-lg">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-info">
+              <h4 class="modal-title">Add Item</h4>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <form
+              role="form"
+              id="addItemsForm"
+              action="/inventory/addItem"
+              method="POST"
+            >
+              <%- include ('partials/messages.ejs') %>
+
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Purchase Date</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"
+                            ><i class="far fa-calendar-alt"></i
+                          ></span>
+                        </div>
+                        <input
+                          type="date"
+                          name="purchaseDate"
+                          id="purchaseDate"
+                          class="form-control"
+                          value="<%= typeof purchaseDate != 'undefined' ? purchaseDate : '' %>"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Item Code</label>
+                      <input
+                        type="text"
+                        name="itemCode"
+                        id="itemCode"
+                        class="form-control"
+                        placeholder="Enter Code ..."
+                        value="<%= typeof itemCode != 'undefined' ? itemCode : '' %>"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Phone Model</label>
+                      <select
+                        class="form-control phoneModel"
+                        name="phoneModel"
+                        id="phoneModel"
+                        value="<%= typeof phoneModel != 'undefined' ? phoneModel : '' %>"
+                        style="width: 100%;"
+                      >
+                        <option selected="selected"> -- None -- </option>
+                        <option>iPhone X</option>
+                        <option>iPhone 11</option>
+                        <option>iPhone 11 Pro</option>
+                        <option>iPhone 11 Pro Max</option>
+                        <option>iPhone XS Max</option>
+                        <option>iPhone 8</option>
+                        <option>iPhone 8 Plus</option>
+                        <option>iPhone XR</option>
+                        <option>Samsung SMG9888 </option>
+                        <option>Apple Watch Series 5</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Phone Storage</label>
+                      <select
+                        class="form-control phoneModel"
+                        name="phoneStorage"
+                        id="phoneStorage"
+                        value="<%= typeof phoneStorage != 'undefined' ? phoneStorage : '' %>"
+                        style="width: 100%;"
+                      >
+                        <option selected="selected"> -- None -- </option>
+                        <option>64 GB</option>
+                        <option>128 GB</option>
+                        <option>256 GB</option>
+                        <option>512 GB</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Phone Color</label>
+                      <select
+                        class="form-control phoneModel"
+                        name="phoneColor"
+                        id="phoneColor"
+                        value="<%= typeof phoneColor != 'undefined' ? phoneColor : '' %>"
+                        style="width: 100%;"
+                      >
+                        <option selected="selected"> -- None -- </option>
+                        <option>Gold</option>
+                        <option>Space Grey</option>
+                        <option>Midnight Green</option>
+                        <option>Red</option>
+                        <option>Green</option>
+                        <option>White</option>
+                        <option>Black</option>
+                        <option>Purple</option>
+                        <option>Silver</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label> IMEI </label>
+                      <input
+                        type="text"
+                        name="imei"
+                        id="imei"
+                        class="form-control"
+                        placeholder="IMEI Number ..."
+                        value="<%= typeof imei != 'undefined' ? imei : '' %>"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Purchase Rate </label>
+                      <input
+                        type="text"
+                        name="rate"
+                        id="rate"
+                        class="form-control"
+                        placeholder="Purchase Rate (USD to TZS) ..."
+                        value="<%= typeof rate != 'undefined' ? rate : '' %>"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Price USD</label>
+                      <input
+                        type="text"
+                        name="priceUsd"
+                        id="priceUsd"
+                        class="form-control"
+                        placeholder="Enter Price (USD) ..."
+                        value="<%= typeof priceUsd != 'undefined' ? priceUsd : '' %>"
+                        onblur="multiply.call(this, this.form.elements.rate.value, this.form.elements.priceUsd.value)"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Price Tshs</label>
+                      <input
+                        type="text"
+                        name="priceTzs"
+                        id="priceTzs"
+                        class="form-control"
+                        placeholder="Enter Price (TZS) ..."
+                        value="<%= typeof priceTzs != 'undefined' ? priceTzs : '' %>"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Other Cost </label>
+                      <input
+                        type="text"
+                        name="cost"
+                        id="cost"
+                        class="form-control"
+                        placeholder="Enter Costs ..."
+                        value="<%= typeof costs != 'undefined' ? costs : '' %>"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Item Description </label>
+                      <textarea
+                        class="form-control"
+                        name="description"
+                        id="description"
+                        rows="3"
+                        placeholder="Enter ..."
+                        value="<%= typeof description != 'undefined' ? description : '' %>"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label> Item Bar Code</label>
+                      <textarea
+                        class="form-control"
+                        name="barCode"
+                        id="barCode"
+                        rows="3"
+                        placeholder="Enter ..."
+                        value="<%= typeof barCode!= 'undefined' ? barCode : '' %>"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button
+                  type="submit"
+                  id="itemReset"
+                  class="btn btn-default float-right"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-info">
+                  Add Item
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <%- include ('partials/footer.ejs') %>
+    </div>
+
+    <%- include ('partials/tail.ejs') %>
+  </body>
+</html>
